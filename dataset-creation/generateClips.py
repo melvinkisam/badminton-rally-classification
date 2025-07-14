@@ -2,9 +2,10 @@ import pandas as pd
 from moviepy.video.io.VideoFileClip import VideoFileClip
 import os
 
-match_path = "/Users/melvinkisam/Documents/Python workspace/notts-dissertation/badminton-rally-classification/dataset-creation/match-videos/match_1-sb.mp4"
-flags_path = "/Users/melvinkisam/Documents/Python workspace/notts-dissertation/badminton-rally-classification/dataset-creation/tag-output/match_1-sb_key.csv"
-output_folder = '/Users/melvinkisam/Documents/Python workspace/notts-dissertation/badminton-rally-classification/dataset-creation/labelled-data/match_1'
+match_path = "/Users/melvinkisam/Documents/python-workspace/notts-dissertation/badminton-rally-classification/dataset-creation/match-videos/match_1-sb.mp4"
+flags_path = "/Users/melvinkisam/Documents/python-workspace/notts-dissertation/badminton-rally-classification/dataset-creation/tag-output/match_1-sb_key.csv"
+output_folder = '/Users/melvinkisam/Documents/python-workspace/notts-dissertation/badminton-rally-classification/dataset-creation/labelled-data/match_1'
+
 
 def split_video(match_path, flags_path, output_folder, by='rallies'):
 
@@ -71,5 +72,4 @@ def split_video(match_path, flags_path, output_folder, by='rallies'):
 
 if not os.path.exists(output_folder): #Overwrite prevention... stops accidental runs loosing progress.
     split_video(match_path, flags_path, output_folder, by='rallies')
-
-
+    

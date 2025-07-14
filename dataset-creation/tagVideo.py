@@ -1,13 +1,14 @@
 import pygame
 import csv
-from moviepy import VideoFileClip
+from moviepy.editor import VideoFileClip
 
 filename = "match_2-sb"
-video_path = f"/Users/melvinkisam/Documents/Python workspace/notts-dissertation/badminton-rally-classification/dataset-creation/match-videos/{filename}.mp4"
-output_csv = f"/Users/melvinkisam/Documents/Python workspace/notts-dissertation/badminton-rally-classification/dataset-creation/tag-output/{filename}_key.csv"
+video_path = f"/Users/melvinkisam/Documents/python-workspace/notts-dissertation/badminton-rally-classification/dataset-creation/match-videos/{filename}.mp4"
+output_csv = f"/Users/melvinkisam/Documents/python-workspace/notts-dissertation/badminton-rally-classification/dataset-creation/tag-output/{filename}_key.csv"
 
 inputs = []
 dimensions = [1000, 600]
+
 
 def save_inputs_to_csv(inputs, csv_path):
     with open(csv_path, mode='w', newline='') as file:
@@ -20,7 +21,7 @@ def play_video_with_inputs(video_path):
     screen = pygame.display.set_mode(dimensions)
     pygame.display.set_caption("Video Player")
 
-    video = VideoFileClip(video_path).resized(new_size=dimensions)
+    video = VideoFileClip(video_path).resize(dimensions)
     fps = video.fps
     frame_duration = 1 / fps
     playbackSpeed = 2
@@ -105,6 +106,7 @@ def play_video_with_inputs(video_path):
     save_inputs_to_csv(inputs, output_csv)
     print(f"Inputs saved to {output_csv}")
     pygame.quit()
+
 
 play_video_with_inputs(video_path)
 print("Program finished.")

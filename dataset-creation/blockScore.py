@@ -1,19 +1,17 @@
 import cv2
-import json
 import numpy as np
-import os
-import time
 
-# Useful to block out scores to annonomyse data
+# Useful to block out scores to anonymise data
 # Pass array of 4 corners, draws a white box there on every frame of the video processed.
 
-inputMatch = '/Users/melvinkisam/Documents/Python workspace/notts-dissertation/badminton-rally-classification/dataset-creation/match-videos/match_1.mp4'
-outputMatch = '/Users/melvinkisam/Documents/Python workspace/notts-dissertation/badminton-rally-classification/dataset-creation/match-videos/match_1-sb.mp4'
+inputMatch = '/Users/melvinkisam/Documents/python-workspace/notts-dissertation/badminton-rally-classification/dataset-creation/match-videos/match_1.mp4'
+outputMatch = '/Users/melvinkisam/Documents/python-workspace/notts-dissertation/badminton-rally-classification/dataset-creation/match-videos/match_1-sb.mp4'
 
 points = [[15,15], # top left
           [15,75], # bottom left
           [200,75], # bottom right
           [200,15]] # top right
+
 
 def get_first_frame(video):
         cap = cv2.VideoCapture(video)
@@ -40,7 +38,6 @@ def drawBox(video,points):
     #masked_image = cv2.bitwise_and(frame, mask)
 
     cv2.imwrite('Training/Matches/test.jpg', frame)
-
 
 def process_video(points, video, output_video):
     cap = cv2.VideoCapture(video)
@@ -82,6 +79,7 @@ def process_video(points, video, output_video):
     cap.release()
     out.release()
     print(f"Processed video saved as {output_video}")
+
 
 # Function to align points
 # drawBox(inputMatch,points)
