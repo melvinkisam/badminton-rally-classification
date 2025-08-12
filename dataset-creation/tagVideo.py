@@ -2,9 +2,9 @@ import pygame
 import csv
 from moviepy.editor import VideoFileClip
 
-filename = "match_2-sb"
-video_path = f"/Users/melvinkisam/Documents/python-workspace/notts-dissertation/badminton-rally-classification/dataset-creation/match-videos/{filename}.mp4"
-output_csv = f"/Users/melvinkisam/Documents/python-workspace/notts-dissertation/badminton-rally-classification/dataset-creation/tag-output/{filename}_key.csv"
+filename = "match_9-sb"
+video_path = f"./badminton-rally-classification/dataset-creation/match-videos/{filename}.mp4"
+output_csv = f"./badminton-rally-classification/dataset-creation/tag-output/{filename}_key.csv"
 
 inputs = []
 dimensions = [1000, 600]
@@ -15,6 +15,7 @@ def save_inputs_to_csv(inputs, csv_path):
         writer = csv.DictWriter(file, fieldnames=["time", "key"])
         writer.writeheader()
         writer.writerows(inputs)
+
 
 def play_video_with_inputs(video_path):
     pygame.init()

@@ -4,8 +4,9 @@ import numpy as np
 # Useful to block out scores to anonymise data
 # Pass array of 4 corners, draws a white box there on every frame of the video processed.
 
-inputMatch = '/Users/melvinkisam/Documents/python-workspace/notts-dissertation/badminton-rally-classification/dataset-creation/match-videos/match_1.mp4'
-outputMatch = '/Users/melvinkisam/Documents/python-workspace/notts-dissertation/badminton-rally-classification/dataset-creation/match-videos/match_1-sb.mp4'
+matchID = 'match_9'
+inputMatch = f'./badminton-rally-classification/dataset-creation/match-videos/{matchID}.mp4'
+outputMatch = f'./badminton-rally-classification/dataset-creation/match-videos/{matchID}-sb.mp4'
 
 points = [[15,15], # top left
           [15,75], # bottom left
