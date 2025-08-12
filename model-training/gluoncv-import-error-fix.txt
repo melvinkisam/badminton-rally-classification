@@ -1,0 +1,40 @@
+Due to a deprecated gluoncv version, some adjustments are needed.
+
+ERROR FIXING:
+~/python3.10/site-packages/gluoncv/torch/data/video_cls/multigrid_helper.py:
+from torch._six import int_classes as _int_classes --> _int_classes = (int, )
+
+~/python3.10/site-packages/gluoncv/torch/data/transforms/instance_transforms/transform.py:
+line 876:
+    def __init__(self, src_rect, output_size, interp=Image.LINEAR, fill=0):
+        """
+        Args:
+            src_rect (x0, y0, x1, y1): src coordinates
+            output_size (h, w): dst image size
+            interp: PIL interpolation methods
+            fill: Fill color used when src_rect extends outside image
+        """
+        super().__init__()
+        self._set_attributes(locals())
+
+interp=Image.LINEAR --> interp=Image.BILINEAR
+
+-------------------------------------------------------------------------------------------------------------------
+
+Fix for error: ImportError: cannot import name 'int_classes' from 'torch._six'
+
+nano ~/miniconda3/envs/CVInBadminton/lib/python3.9/site-packages/gluoncv/torch/data/video_cls/multigrid_helper.py
+
+replace: from torch._six import int_classes as _int_classes
+
+with: _int_classes = (int, )
+
+clear cache with: 
+find ~/miniconda3/envs/CVInBadminton/ -name "__pycache__" -type d -exec rm -rf {} +
+find ~/miniconda3/envs/CVInBadminton/ -name "*.pyc" -delete
+
+HPC cluster conda environment installation (older cuda to bypass glibc issue):
+conda install pytorch=1.13.1 torchvision=0.14.1 torchaudio=0.13.1 cudatoolkit=10.2 -c pytorch
+
+or use pip:
+pip install torch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1 --index-url https://download.pytorch.org/whl/cu117
