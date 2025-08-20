@@ -9,11 +9,11 @@ import torchvision.transforms as T
 from torch.utils.data import Dataset, DataLoader
 from model_package import load_model
 from tqdm import tqdm
-from model_package import VideoChunkDataset
+from model_package import MatchChunkDataset
 
 # Paths
-output_dir = 'badminton-rally-classification/model-training/output'
-model_path = 'badminton-rally-classification/model-training/trained_models/trained_model_3.pth'
+output_dir = 'badminton-rally-classification/model-training/output_pth612832'
+model_path = 'badminton-rally-classification/model-training/trained_models/trained_model_6.pth'
 match_path = 'badminton-rally-classification/dataset-creation/match-videos/match_9-sb.mp4'
 
 class_names = ['interval', 'rally', 'shuttlechange', 'floormopping', 'setbreak']
@@ -37,7 +37,7 @@ model.eval()
 model.to(device)
 
 
-dataset = VideoChunkDataset(match_path, chunk_frames=128, sample_frames=32)
+dataset = MatchChunkDataset(match_path, chunk_frames=128, sample_frames=32)
 loader = DataLoader(dataset, batch_size=4, shuffle=False)
 
 

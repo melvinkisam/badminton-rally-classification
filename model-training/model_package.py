@@ -68,7 +68,41 @@ class VideoDataset2(Dataset):
 
 
 class VideoChunkDataset(Dataset):
-    def __init__(self, video_path, chunk_frames=64, sample_frames=16, resize=(224, 224)):
+    def __init__(self, video_paths, labels, chunk_size=64, sample_frames=32, stride=16, transform=None):
+        self.samples = []
+        self.chunk_size = chunk_size
+        self.sample_frames = sample_frames
+        self.stride = stride
+        self.transform = transform
+
+        for path, label in zip(video_paths, labels):
+            video, _, _ = read_video(path, pts_unit='sec')
+            total_frames = video.shape[0]
+
+            # Sliding-window: move forward by 'stride' each time
+            for start in range(0, total_frames - chunk_size + 1, stride):
+                self.samples.append((path, start, label))
+
+    def __len__(self):
+        return len(self.samples)
+
+    def __getitem__(self, idx):
+        path, start_frame, label = self.samples[idx]
+        
+        video, _, _ = read_video(path, pts_unit='sec')
+        video = video[start_frame:start_frame + self.chunk_size]  # (T, H, W, C)
+        video = video.permute(3, 0, 1, 2).float() / 255.0          # (C, T, H, W)
+
+        video = uniform_sampling(video, self.sample_frames) # Uniformly sample frames
+
+        if self.transform:
+            video = self.transform(video)
+
+        return video, torch.tensor(label, dtype=torch.long)
+
+
+class MatchChunkDataset(Dataset):
+    def __init__(self, video_path, chunk_frames=64, sample_frames=32, resize=(224, 224)):
         self.video_path = video_path
         self.chunk_frames = chunk_frames
         self.sample_frames = sample_frames
@@ -104,6 +138,7 @@ class VideoChunkDataset(Dataset):
         clip_tensor = torch.stack(sampled).permute(1, 0, 2, 3)  # (3, 16, H, W)
 
         return clip_tensor, start_idx
+    
 
 def uniform_sampling(video, num_samples):
     T = video.shape[1]
@@ -141,6 +176,14 @@ def resize_tensor(video, size=(224, 224)):
     video = F.interpolate(video, size=size, mode='bilinear', align_corners=False) # Resize each frame using interpolate
     
     return video.permute(1, 0, 2, 3) # Back to [C, T, H, W]
+
+
+def normalize_clip(x):
+    # x is (C,T,H,W)
+    mean = torch.tensor([0.485, 0.456, 0.406]).view(3,1,1,1)
+    std  = torch.tensor([0.229, 0.224, 0.225]).view(3,1,1,1)
+
+    return (x - mean) / std
 
 
 def load_model(model_name='badminton-rally-classification/model-training/models/i3d_resnet50_v1_kinetics400.yaml', num_classes=5):
