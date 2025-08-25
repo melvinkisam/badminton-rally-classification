@@ -14,9 +14,10 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 class VideoDataset(Dataset):
-    def __init__(self, video_paths, labels, transform=None):
+    def __init__(self, video_paths, labels, num_samples=16, transform=None):
         self.video_paths = video_paths
         self.labels = labels
+        self.num_samples = num_samples
         self.transform = transform
 
     def __len__(self):
@@ -26,7 +27,7 @@ class VideoDataset(Dataset):
         video, _, _ = read_video(self.video_paths[idx], pts_unit='sec')  # (T, H, W, C) output shape from torchvision
         video = video.permute(3, 0, 1, 2).float() / 255.0  # (C, T, H, W) to match PyTorch format
 
-        video = uniform_sampling(video, 32) # Uniformly sample frames
+        video = uniform_sampling(video, self.num_samples) # Uniformly sample frames
 
         if self.transform:
             video = self.transform(video)
