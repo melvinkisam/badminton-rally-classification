@@ -100,7 +100,7 @@ class VideoChunkDataset(Dataset):
             video = self.transform(video)
 
         return video, torch.tensor(label, dtype=torch.long)
-
+    
 
 class MatchChunkDataset(Dataset):
     def __init__(self, video_path, chunk_frames=64, sample_frames=32, resize=(224, 224)):
@@ -111,7 +111,11 @@ class MatchChunkDataset(Dataset):
 
         self.cap = cv2.VideoCapture(video_path)
         self.total_frames = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        self.clip_start = list(range(0, self.total_frames - chunk_frames + 1, chunk_frames))
+
+        # Include all chunks, including last partial one
+        self.clip_start = list(range(0, self.total_frames, chunk_frames))
+
+        # Transform to convert frames to tensors
         self.transform = T.Compose([
             T.ToTensor(),
             T.Resize(resize)
@@ -125,6 +129,8 @@ class MatchChunkDataset(Dataset):
         frames = []
 
         self.cap.set(cv2.CAP_PROP_POS_FRAMES, start_idx)
+
+        # Read frames up to chunk_frames
         for _ in range(self.chunk_frames):
             ret, frame = self.cap.read()
             if not ret:
@@ -133,13 +139,25 @@ class MatchChunkDataset(Dataset):
             frame_tensor = self.transform(frame)
             frames.append(frame_tensor)
 
+        # If no frames could be read, fill chunk with zeros
+        if len(frames) == 0:
+            dummy_frame = torch.zeros(3, self.resize[0], self.resize[1])
+            frames = [dummy_frame.clone() for _ in range(self.chunk_frames)]
+        # Pad with last frame if fewer than chunk_frames
+        elif len(frames) < self.chunk_frames:
+            last_frame = frames[-1]
+            while len(frames) < self.chunk_frames:
+                frames.append(last_frame.clone())
+
         # Uniformly sample frames
-        step = self.chunk_frames // self.sample_frames
+        step = max(1, self.chunk_frames // self.sample_frames)
         sampled = [frames[i] for i in range(0, self.chunk_frames, step)]
-        clip_tensor = torch.stack(sampled).permute(1, 0, 2, 3)  # (3, 16, H, W)
+        sampled = sampled[:self.sample_frames]  # ensure exact sample_frames count
+
+        clip_tensor = torch.stack(sampled).permute(1, 0, 2, 3)  # (C, T, H, W)
 
         return clip_tensor, start_idx
-    
+
 
 def uniform_sampling(video, num_samples):
     T = video.shape[1]
