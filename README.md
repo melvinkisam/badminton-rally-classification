@@ -80,7 +80,7 @@ interp=Image.BILINEAR
 
 ---
 
-## Fix for Error: `ImportError: cannot import name 'int_classes' from 'torch._six'`
+### Fix for Error: `ImportError: cannot import name 'int_classes' from 'torch._six'`
 
 Edit the file:
 
@@ -109,7 +109,7 @@ find ~/miniconda3/envs/CVInBadminton/ -name "*.pyc" -delete
 
 ---
 
-## HPC Cluster Conda Environment Installation
+### HPC Cluster Conda Environment Installation
 
 (Older CUDA to bypass glibc issue)
 
